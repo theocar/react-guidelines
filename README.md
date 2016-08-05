@@ -62,17 +62,17 @@ export class UserProfile extends React.Component{
 
  /* GOOD */
  // navigation.jsx
- export class Navigation extends React.Component{
+ export default class Navigation extends React.Component{
 	 render(){};
  }
 
  // service-user.js
- export class ServiceUser{
+ export default class ServiceUser{
 	 static loadUsers(){};
  }
 
  // service-analytics.js
- export class ServiceAnalytics{
+ export default class ServiceAnalytics{
 	static sendGoogleAnalytics(){};
  }
 
