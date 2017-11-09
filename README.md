@@ -19,9 +19,9 @@ It's an opinionated document so you may or may not agree with all explanations. 
 
 #### Files
 
-We recommend prefixing your file name with the name of the parent folder
+We recommend prefixing your file name with the name of the parent folder.
 
-*Why?*:
+*Why?*
 
 - Helps to easily find the file with your IDE
 
@@ -30,7 +30,7 @@ We recommend prefixing your file name with the name of the parent folder
 
 /* BAD */
 // car/list.jsx
-export class List extends React.Component{
+export class List extends React.Component {
 }
 
 /* BAD */
@@ -44,7 +44,7 @@ export class CarList extends React.Component{
 }
   ```
 
-Use the .jsx extension for React Components
+Use the `.jsx` extension for React Components
 
 ```javascript
 
@@ -62,16 +62,16 @@ export class BookingCard extends React.Component{
 
 *Why?*:
 
-- Helps to easily differentiate files describing components and other containing regular javascript  
+- Helps to easily differentiate files describing components and other containing regular Javascript.  
 
 #### Folders
 
-- Don't create more than 2 levels of hierarchy of folders
+- Don't create more than two levels of hierarchy of folders.
 - Use dots in your filename to indicate hierarchy
 
 *Why?*:
 
-- To many nested folder can make it hard to find your code
+- Too many nested folder can make it hard to find your code.
 
 
 ```javascript
