@@ -14,6 +14,7 @@ These guidelines are based on our development experience with [React](https://fa
 It's an opinionated document so you may or may not agree with all explanations. However, it worked for us so why not for you 🙂.
 
 ## Table of content
+TODO
 
 
 ## Single Responsibility
@@ -78,8 +79,6 @@ export class UserProfile extends React.Component{
  }
 
   ```
-=======
-TODO
 
 ## Top-down
 
