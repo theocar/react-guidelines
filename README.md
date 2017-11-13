@@ -30,7 +30,7 @@ It's an opinionated document so you may or may not agree with all explanations. 
   1. [Intermediate applications: smart and dumb components](#3-intermediate-applications-containers-and-dumb-components)
 		1. [Smart components, or containers](#a-smart-components-or-containers)
 	 	1. [Pure view components](#b-pure-view-components)
-	1. [Discussion about top-down](#4-discussion-about-top-down)
+	1. [Discussion about top-down (not finished)](#4-discussion-about-top-down)
 
 ## 1. Introduction
 
@@ -693,7 +693,7 @@ export class CarList extends React.Component {
 }
 ```
 
-## 4. Discussion about top-down
+## 4. Discussion about top-down (not finished)
 
 Transfer *props* from the parents to the children.
 It is ok to use state inside dumb components only when the state concerns a part
