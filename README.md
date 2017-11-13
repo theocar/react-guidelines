@@ -1,7 +1,10 @@
 # React Guidelines
 > OuiCar React Guidelines &amp; Best Practices
 
+
 ## Purpose
+======
+
 This document describes best practices and guidelines used by the frontend team at [OuiCar](http://www.ouicar.fr/).
 This style guide has two main purposes :
 -  Present coding conventions with real cases examples
@@ -12,16 +15,23 @@ These guidelines are based on our development experience with [React](https://fa
 
 It's an opinionated document so you may or may not agree with all explanations. However, it worked for us so why not for you 🙂.
 
+
 ## Table of content
-	1. [Introdution](#introduction)
-	1. [Single Responsibility](#single-responsibility)
-  1. [Intermediate applications: containers and dumb components](#containers-and-dumb-components)
-  1. [Generally top-down](#top-down)
-  1. [Naming Conventions](#naming-conventions)
+======
+
+  1. [Introduction](#introduction)
+	1. [React basic guidelines](#react-guidelines)
+		1. [Naming Conventions](#naming-conventions)
+		1. [Components: breaking it down](#breaking-it-down)
+		1. [Top-down](#top-down)
+		1. [Top-down](#top-down)
+  1. [Intermediate applications: smart and dumb components](#containers-and-dumb-components)
 
 
 ## Introduction
+======
 
+#### Resources
 ##### Some very insightful resources on the react ecosystem:
 - [Hacker Way: Rethinking Web App Development at Facebook](https://www.youtube.com/watch?v=nYkdrAPrdcw)
 - [Dan Abramov - Live React: Hot Reloading with Time Travel at react-europe 2015](https://www.youtube.com/watch?v=xsSnOQynTHs)
@@ -38,22 +48,143 @@ It's an opinionated document so you may or may not agree with all explanations. 
 ##### For curious people:
 - [DraftJS](https://draftjs.org/)
 
-#### React
-The idea behind React is to
+### Context
+At Ouicar we use the following stack:
+- React for view management
+- React-router for routing
+- FlowType for type checking
+- Redux for store management
+- Redux-saga (enhanced with effects) for side effects
+
+### Foreword
+The idea behind this doc is to rationalize the way we build the ouicar frontend application.
+
+* React:
+	React was created with the idea that old web development was made easier by the fact that the server acted like a **state machine**. Indeed, when a user made a request, the server would find the user in the database with all the data related to him and create a HTML page that represented the current state of this user.
+	No dynamic content, no dynamic user interaction, no complexity. One view corresponded to one view.
+	With frontend frameworks such as angular, which works notably with double variable bindings, the complexity of an error could grow exponentially making the work of debugging tedious.
+	React answers to that problem with one-way binding and top down approach. The React components tree acts as a state machine: for one application state corresponds exactly one view.
+	So our goal is to create an application that is very easy to reason about. A big state machine with sub state machines, each composed of sub state machines and so on...
+
+* Redux:
+	Redux (a flux framework, see the video [here](https://www.youtube.com/watch?v=nYkdrAPrdcw)) works hand to hand with React by providing a way to easily store application data. Data can be modified through **synchronous actions**, making it very simple to reason about. 
+	Data are then connected to the React components tree that handles the view. 
+	Voilà, objective fulfilled: **one state = only one view = pure view function!**
+
+* React-router:
+	React-router integrates well with the above basic stack by using the URL aka the current route as part of the global state of the application. You can specify route params, query params and what part of the React components tree should be active when a specific route is mounted. Route params and query params will be included in your global state via props passed to the child component of the route.
+	
+* Redux-saga:
+	As mentioned above, redux handles store state updates through **synchronous actions**. This a very important point as it ensures that your global application acts synchronously as a pure (view) function. One action will generally trigger a store update, which will trigger a React components tree update. That's it. No side effect, no surprise.
+	But what about side effect then? How do you handle API calls for example? That's when **Redux-saga** comes into place. The idea of redux-saga is to handle your asynchronous in one place, and then dispatching synchronous actions when those nasty asynchronous functions return.
+	As far as Redux is concerned, only synchronous actions are being seen. Easy.
+	
+	
+## 1. React basic guidelines
+======
+
+### Naming conventions
+
+1. Files
+
+We recommend prefixing your file name with the name of the parent folder.
+When searching for how to prefix your file name, think of the react dev-tool and what
+you would like to see when searching your component in the tree of components.
+
+*Why?*
+
+- Helps to easily find the file with your react dev-tools.
+- To much prefixing is useless, but you need to understand what the component does when
+you see it surrounded by his context components.
 
 
-## Single Responsibility
+```javascript
 
-Define 1 React Component per file. The component should have a responsibility over a single functionality.
+/* BAD */
+// car/list.jsx
+export class List extends React.Component {
+}
+
+/* BAD */
+// car/list.jsx
+export class ListCar extends React.Component{
+}
+
+/* GOOD */
+// car/list.jsx
+export class CarList extends React.Component{
+}
+  ```
+
+Use the `.jsx` extension for React Components
+
+```javascript
+
+/* BAD */
+// booking/card.js
+export class BookingCard extends React.Component{
+}
+
+/* GOOD */
+// booking/card.jsx
+export class BookingCard extends React.Component{
+}
+  ```
 
 *Why?*:
 
-- Better testing, More readable, eases maintainability.
-- Avoid confusion no more "which component should i import ? " There's only one !
+- Helps to easily differentiate files describing components and other containing regular Javascript.
 
-##### example 1 :
+#### Folders
+
+- Folders represent a feature
+- Use dots in your filename to indicate hierarchy
+
+*Why?*:
+
+- Too many nested folder can make it hard to find your code.
+
+
 ```javascript
 
+/* BAD */
+// car/edit/disable/form.jsx
+export class CarEditDisableForm extends React.Component{
+}
+
+/* BAD */
+// car/edit/disable/form/date-picker.jsx
+export class CarEditDisableFormDatePicker extends React.Component{
+}
+
+/* GOOD */
+// car/edit/disable.form.jsx
+export class CarEditDisableForm extends React.Component{
+}
+
+/* GOOD */
+// car/edit/disable.form.date-picker.jsx
+export class CarEditDisableFormDatePicker extends React.Component{
+}
+```
+
+### Components: breaking it down
+
+React components can be compared to legos. Legos are small and useless when taken alone, but can be assembled to form big and complex pieces of [work](http://lolwat.me/imagearticle/201709/1505925304-construction-lego-enorme-grande.jpg). Actually, React is even more powerful than that, because once you have built a component, it can be reused anywhere, as many time as you want. No extra work, no code duplication.
+
+Here are some basic guidelines to make the most out of React:
+
+
+#### Define one exported React Component per file. 
+
+The component should have a responsibility over a single functionality. Inside a file you can still declare several components for the sake of clarity and component smallness but **only one component should be exposed**
+
+*Why?*:
+- Better testing, More readable, eases maintainability.
+- Avoid confusion, no more "which component should I import ? " There's only one!
+
+##### example:
+```javascript
 /* BAD */
 // user.js
 export class UserAvatar extends React.Component{
@@ -71,8 +202,147 @@ export default class UserAvatar extends React.Component{
 // user-profile.jsx
 export default class UserProfile extends React.Component{
 }
+```
+ 
+ 
+#### Components should have a simple and predictable API
 
+Components are small applications for themselves. They answer one problem. They are dumb. They want to be as independent from their context as possible.
+
+*Why?*:
+	- Better reusability
+	- Faster construction: if your components are simple and predictable, they can be reused. They can be assembled to form bigger, but still simple and predictable, components. These can then be reused to form bigger components etc etc...
+	- Easier to reason about: components act as black boxes that answer one problem and are very easy to reason about. Complexity is pushed to the edges of the leaves! When constructing your big and smart component, you won't have to care about your children components, they handle themselves (if you respect their APIs)!
+	
+##### example:
+```javascript
+/* BAD */
+// user.jsx
+
+// See how User render function is not clear.
+// Nothing in it is reusable. Imagine somewhere you need another UserAvatar? => code duplication and no simple API.
+export class User extends React.Component{
+	render() {
+		const {user} = this.props;
+		
+		return (
+			<div>
+				<ul>
+					<li><Link to={'/'}></Link></li>
+					<li><Link to={'/about'}></Link></li>
+					<li><Link to={'/bookings'}></Link></li>
+				</ul>
+				
+				<div className='user-avatar-wrapper'>
+					<img 
+						src={user ? user.imgSrc : placeHolderSrc}
+						className='user-avatar' 
+					/>
+				</div>
+				
+				<div className='user-profile-wrapper'>
+					...
+				</div>
+			</div>
+		)
+	}
+}
+
+
+/* GOOD */
+// user.jsx
+import Navbar from './navbar.jsx';
+import UserAvatar from './avatar.jsx';
+import UserProfile from './profile.jsx';
+
+// Now see how the User component becomes simple to read and reason about.
+// User is only responsible for assembling small components but do almost nothing itself!
+export class User extends React.Component{
+	render() {
+		const {user} = this.props;
+		
+		return (
+			<div>
+				<Navbar />
+				
+				// See how UserAvatar can now handle custom operations very simply.
+				// When using UserAvatar, you don't have to worry about display,
+				// You simply mention what you want and it will be handled accordingly.
+				// Don't hesitate to allow custom styles inside small components to make them very customizable and reusable!
+				<UserAvatar 
+					size='medium' 
+					user={user}
+					
+					// These checks could even be automatically performed inside the component
+					// But for the sake of example we expose them here.
+					color={user.specialColor} 
+					withPicture={user.withPicture}
+				/>
+				
+				<UserProfile 
+					user={user}
+				/>
+			</div>
+		)
+	}
+}
  ```
+
+##### Don't let your components grow big
+
+Sometimes you feel you have a very long component that for example uses several subrender functions.
+Well there you could split this component into several small components (functional or not). These small components would just be sugar for making your small render functions more explicit and easy to reason about. Also you would not need to put these small components into separated files as they are not needed anywhere else, they are just internal library for this component, like an internal subrender function would be.
+
+##### example
+```javascript
+
+	// Initially...
+	export class Home extends React.Component{
+		props: {
+			prop1: any,
+			prop2: any,
+			prop3: any,
+			prop4: any,
+		}
+
+		renderContent1 = () => {} // Some markup returned, uses prop1
+		renderContent2 = () => {} // Some markup returned, uses prop2
+		renderContent3 = () => {} // Some markup returned, uses prop3
+		renderContent4 = () => {} // Some markup returned, uses prop4
+
+		render() {
+			// BAD: by looking at the code we don't know what part of the props each renderFunction needs
+			return (
+				<div>
+					{this.renderContent1()} // use prop1 ?
+					{this.renderContent2()} // use prop2 ?
+					{this.renderContent3()} // use prop3 ?
+					{this.renderContent4()} // use prop4 ?
+				</div>
+			);
+		}
+	}
+
+	// Could become...
+	const SubComponent1 = ({ prop1 }) => {} // some markup
+	const SubComponent2 = ({ prop2 }) => {} // some markup
+	const SubComponent3 = ({ prop3 }) => {} // some markup
+	const SubComponent4 = ({ prop4 }) => {} // some markup
+
+	export class Home extends React.Component{
+		render() {
+			const { prop1, prop2, prop3, prop4 } = this.props;
+			return (
+				<div>
+					<SubComponent1 prop1={prop1} /> // We see it uses prop1 !
+					<SubComponent2 prop2={prop2} /> // We see it uses prop2 !
+					<SubComponent3 prop3={prop3} /> // We see it uses prop3 !
+					<SubComponent4 prop4={prop4} /> // We see it uses prop4 !
+				</div>
+			);
+		}
+	}
+```
 
 
  ##### example 2 :
@@ -489,88 +759,3 @@ export default connect(state => ({
   cars: state.cars
 }))(CarList);
 ```
-
-## Naming Conventions
-
-#### Files
-
-We recommend prefixing your file name with the name of the parent folder.
-When searching for how to prefix your file name, think of the react dev-tool and what
-you would like to see when searching your component in the tree of components.
-
-*Why?*
-
-- Helps to easily find the file with your react dev-tools.
-- To much prefixing is useless, but you need to understand what the component does when
-you see it surrounded by his context components.
-
-
-```javascript
-
-/* BAD */
-// car/list.jsx
-export class List extends React.Component {
-}
-
-/* BAD */
-// car/list.jsx
-export class ListCar extends React.Component{
-}
-
-/* GOOD */
-// car/list.jsx
-export class CarList extends React.Component{
-}
-  ```
-
-Use the `.jsx` extension for React Components
-
-```javascript
-
-/* BAD */
-// booking/card.js
-export class BookingCard extends React.Component{
-}
-
-/* GOOD */
-// booking/card.jsx
-export class BookingCard extends React.Component{
-}
-  ```
-
-*Why?*:
-
-- Helps to easily differentiate files describing components and other containing regular Javascript.
-
-#### Folders
-
-- Folders represent a feature
-- Use dots in your filename to indicate hierarchy
-
-*Why?*:
-
-- Too many nested folder can make it hard to find your code.
-
-
-```javascript
-
-/* BAD */
-// car/edit/disable/form.jsx
-export class CarEditDisableForm extends React.Component{
-}
-
-/* BAD */
-// car/edit/disable/form/date-picker.jsx
-export class CarEditDisableFormDatePicker extends React.Component{
-}
-
-/* GOOD */
-// car/edit/disable.form.jsx
-export class CarEditDisableForm extends React.Component{
-}
-
-/* GOOD */
-// car/edit/disable.form.date-picker.jsx
-export class CarEditDisableFormDatePicker extends React.Component{
-}
-  ```
