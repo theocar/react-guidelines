@@ -17,15 +17,23 @@ It's an opinionated document so you may or may not agree with all explanations. 
 
 ## Table of content
 
-  1. [Introduction](#introduction)
-	1. [React basic guidelines](#react-basic-guidelines)
-		1. [Naming Conventions](#naming-conventions)
-		1. [Components: break them down](#break-them-down)
-  1. [Intermediate applications: smart and dumb components](#containers-and-dumb-components)
-	1. [Discussion about top-down](#top-down)
+  1. [Introduction](#1-introduction)
+	1. [React basic guidelines](#2-react-basic-guidelines)
+		1. [Naming Conventions](#a-naming-conventions)
+			1. [Folders](#i-folders)
+			1. [Files](#ii-folders)
+			1. [Components](#iii-components)
+		1. [Components: break them down](#b-break-them-down)
+			1. [Define one exported React Component per file](#i-define-one-exported-react-component-per-file)
+	  	1. [Components should have a simple and predictable API](#ii-components-should-have-a-simple-and-predictable-api)
+		 	1. [Don't let your components grow big](#iii-don't-let-your-components-grow-big)
+  1. [Intermediate applications: smart and dumb components](#3-containers-and-dumb-components)
+		1. [Smart components, or containers](#a-smart-components-or-containers)
+	 	1. [Pure view components](#b-pure-view-components)
+	1. [Discussion about top-down](#4-discussion-about-top-down)
 
 
-## 0. Introduction
+## 1. Introduction
 
 ### a. Resources
 ##### Some very insightful resources on the react eco-system:
@@ -93,7 +101,7 @@ The idea behind this doc is to rationalize the way we build the ouicar frontend 
 	**As far as Redux is concerned, only synchronous actions are being seen. Easy.**
 	
 	
-## 1. React basic guidelines
+## 2. React basic guidelines
 
 ### a. Naming conventions
 
@@ -176,7 +184,7 @@ Components are self explanatory and generally come as black boxes with an explic
 Components are only responsible for themselves. They should generally have no side effects on their own but rather allow their smart parents, through hooks, to take actions.
 
 
-#### i) Define one exported React Component per file. 
+#### i) Define one exported React Component per file 
 
 The component should have one responsibility over a single functionality. Inside a file you can still declare several components for the sake of clarity and component smallness but **only one component should be exposed**
 
