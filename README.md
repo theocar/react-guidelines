@@ -18,16 +18,16 @@ It's an opinionated document so you may or may not agree with all explanations. 
 ## Table of content
 
   1. [Introduction](#introduction)
-	1. [React basic guidelines](#react-guidelines)
+	1. [React basic guidelines](#react-basic-guidelines)
 		1. [Naming Conventions](#naming-conventions)
 		1. [Components: break them down](#break-them-down)
   1. [Intermediate applications: smart and dumb components](#containers-and-dumb-components)
 	1. [Discussion about top-down](#top-down)
 
 
-## Introduction
+## 0. Introduction
 
-### Resources
+### a. Resources
 ##### Some very insightful resources on the react eco-system:
 - MUST WATCH: [Hacker Way: Rethinking Web App Development at Facebook](https://www.youtube.com/watch?v=nYkdrAPrdcw)
 - [Dan Abramov - Live React: Hot Reloading with Time Travel at react-europe 2015](https://www.youtube.com/watch?v=xsSnOQynTHs)
@@ -45,7 +45,7 @@ It's an opinionated document so you may or may not agree with all explanations. 
 - [DraftJS](https://draftjs.org/)
 
 
-### Context
+### b. Context
 At Ouicar we use the following stack:
 - *React* for view management
 - *React-router* for routing
@@ -53,7 +53,7 @@ At Ouicar we use the following stack:
 - *Redux for* store management
 - *Redux-saga* (enhanced with effects) for side effects
 
-### Foreword
+### c. Foreword
 The idea behind this doc is to rationalize the way we build the ouicar frontend application.
 
 
@@ -95,9 +95,9 @@ The idea behind this doc is to rationalize the way we build the ouicar frontend 
 	
 ## 1. React basic guidelines
 
-### Naming conventions
+### a. Naming conventions
 
-1) Folders
+#### i. Folders
 
 * Folder name should be in lowercase and caret-separated
 * Folders represent a goup of related components. 
@@ -111,7 +111,7 @@ The idea behind this doc is to rationalize the way we build the ouicar frontend 
 - Too many files in a folder can make it hard to find your code.
 - Smart file organization improves development speed.
 
-2) Files
+#### ii. Files
 
 * File names should be in lowercase and caret-separated
 * A file name describes what it contains **in the context of the containing folder**
@@ -122,7 +122,7 @@ The idea behind this doc is to rationalize the way we build the ouicar frontend 
 
 - Helps to easily differentiate files describing components and other containing regular Javascript.
 
-3) Components
+#### iii. Components
 
 * We recommend prefixing your component name with the name of the parent folder.
 * When searching for how to prefix your component name, think of the react dev-tool and what
@@ -169,14 +169,14 @@ export class CarList extends React.Component{
 }
   ```
 
-### Components: break them down
+### b. Components: break them down
 
 React components can be compared to legos. Legos are small and useless when taken alone, but can be assembled to form big and complex pieces of [work](http://lolwat.me/imagearticle/201709/1505925304-construction-lego-enorme-grande.jpg). Actually, React is even more powerful than that, because once you have built a component, it can be reused anywhere, as many time as you want. No extra work, no code duplication.
 Components are self explanatory and generally come as black boxes with an explicit API. Inside, they can handle custom cases to fit in many different situations.
 Components are only responsible for themselves. They should generally have no side effects on their own but rather allow their smart parents, through hooks, to take actions.
 
 
-#### Define one exported React Component per file. 
+#### i) Define one exported React Component per file. 
 
 The component should have one responsibility over a single functionality. Inside a file you can still declare several components for the sake of clarity and component smallness but **only one component should be exposed**
 
@@ -206,14 +206,14 @@ export default class UserProfile extends React.Component{
 ```
  
  
-#### Components should have a simple and predictable API
+#### ii) Components should have a simple and predictable API
 
 Components are small applications for themselves. They answer one problem. They are dumb. They want to be as independent from their context as possible.
 
 *Why?*:
-	- Better reusability
-	- Faster construction: if your components are simple and predictable, they can be reused. They can be assembled to form bigger, but still simple and predictable, components. These can then be reused to form bigger components etc etc...
-	- Easier to reason about: components act as black boxes that answer one problem and are very easy to reason about. Complexity is pushed to the edges of the leaves! When constructing your big and smart component, you wouldn't have to care about its children components, they manage themselves (if you respect their APIs)!
+	* Better reusability
+	* Faster construction: if your components are simple and predictable, they can be reused. They can be assembled to form bigger, but still simple and predictable, components. These can then be reused to form bigger components etc etc...
+	* Easier to reason about: components act as black boxes that answer one problem and are very easy to reason about. Complexity is pushed to the edges of the leaves! When constructing your big and smart component, you wouldn't have to care about its children components, they manage themselves (if you respect their APIs)!
 	
 ##### example:
 ```javascript
@@ -289,7 +289,7 @@ export class User extends React.Component{
 }
  ```
 
-#### Don't let your components grow big
+#### iii. Don't let your components grow big
 
 Sometimes you feel you have a very long component that for example uses several subrender functions.
 Well there you could split this component into several small components (functional or not). These small components would just be sugar for making your small render functions more explicit and easy to reason about. Also you would not need to put these small components into separated files as they are not needed anywhere else, they are just internal library for this component, like an internal subrender function would be.
@@ -346,35 +346,35 @@ export class Home extends React.Component{
 }
 ```
 
-## Intermediate applications: containers and dumb components
+## 3. Intermediate applications: containers and dumb components
 
-There is two types of components. Smart components, or container, and dumb components or pure view components.
-Take a look at https://redux.js.org/docs/basics/UsageWithReact.html for a basic overview.
+There is two types of components. Smart components, or containers, and dumb components or pure view components.
+Take a look at https://redux.js.org/docs/basics/UsageWithReact.html for an official overview.
 
-#### Smart components, or containers:
+### a. Smart components, or containers:
 * Are applications or micro-services themselves if you consider them + their children (data not included).
 	They interact with other applications (other containers for example) via dispatch, but they handle everything from data computations/derivations to display.
-	Of course in our case data are stored and managed in redux, API call are done in helpers BUT these are just additional layers to make our lives easier by better separating concerns.
+	Of course in our case data are stored and managed in redux, API calls are handled in helpers BUT these are just additional layers to make our lives easier by better separating concerns.
 
 * Are the interface between the business logic and the pure view.
-	They handle the interactions inside AND outside of their scope of the sub-application that they represent. Only them can do that.
+	They handle interactions inside AND outside of their scope, ie of the sub-application that they represent. Only them can do that.
 
 * Like every applications, they have a state they depend on. Where they get their state from is another story.
-	They can get it through a redux-connect, through props or even through internal component state. In our case we use redux so most of the time the state will be contained in Redux.
+	They can get it through a redux-connect, through props or even through internal component state. In our case we use redux so most of the time the state will come from Redux.
 
-* They are very explicit with their dumb children components. They use them as puppets, pure libraries that know as little about the business logic as possible, specifying everything they need from the component. If a functionality is missing, the hook should be added inside the dumb component after having asked yourself: "Is it still my responsability as a dumb component to handle this part of the view logic?". If so, go ahead and add the endpoint to the dumb component API.
+* They are very explicit with their dumb children components. They use them as puppets, pure libraries that know as little about the business logic as possible, specifying everything they need from the component. If a functionality is missing, the hook should be added inside the dumb component after having asked yourself: "Is it still my responsability as a dumb component to handle this part of the view logic?". If so, go ahead and add the endpoint to the dumb component API. If not, think about how you can break things down to better separate concerns.
 
 * They compute derived data and pass them down to their dumb components.
 
-* They use dumb component hooks, which names describe a view action (as much as possible), to trigger actions related to the business logic OR related to views outside of its sub-application scope.
+* They use dumb component hooks, which names describe a view action (as much as possible), to trigger actions related to the business logic.
 
-* They are responsible for the logical view of their scope but not to the pure view (how things look).
+* They are responsible for the logical view of their scope but not for the pure view (how things look).
 	-> They compute derived data (logical view) and pass them down to dumb components.
 
-* They never display markup, they should have only one child component, because they are not aware of how things look. They just know what are the data that need to be shown and the logical actions that need to be triggered.
+* They never display markup, they should have only one child component, because they are not aware of how things look. They just know what are the needed data and the logical actions that need to be triggered.
 
 
-For the sake of example we won't use connect react-redux helper here, but again this would make our lives easier.
+For the sake of example we won't use react-redux connect helper here, even though it would make our lives easier.
 
 ```javascript
 /* BAD */
@@ -481,7 +481,7 @@ export class CarListContainer extends React.Component {
 
 	getLoadedCars = filter(cars, car => car.hasBeenFullyLoaded);
 
-  render() {
+	render() {
 		const {cars} = this.props;
 
 		return (
@@ -489,7 +489,7 @@ export class CarListContainer extends React.Component {
 				// GOOD: the cars are already filtered logically.
 				// The dumb component only know what to display, 
 				// not why some elements were filtered.
-				// The dumb component is now reusable in "many" circumstances
+				// The dumb component is now reusable in many circumstances
 				cars={this.getLoadedCars(cars)}
 
 				// GOOD: the dumb component here can display disabled elements,
@@ -497,7 +497,7 @@ export class CarListContainer extends React.Component {
 				// the relationship to the logic.
 				disableField='toBeRepaired'
 
-				// GOOD: the dumb component what the selection is for, but it knows that
+				// GOOD: the dumb component doesn't know what the selection is for, but it knows that
 				// car elements can be selected and that it needs to call this callback
 				// The name "onSelect" is as dumb as possible, 
 				// it assumes nothing on the logic behind
@@ -513,29 +513,32 @@ export class CarListContainer extends React.Component {
 }
 ```
 
-#### Pure view components:
+### b. Pure view components:
 
 * They do not know anything about the logic of your application. They do not compute derived data from the state, nor do they activate things based on logic, except when it is pure view logic that they are responsible for.
-	Example: A list that should display a list filtered by a certain criterium -> the view component should not handle the filtering operation, because how to filter the data given the criteria is a business logical operation, not a pure view operation.
-	Other example: Now imagine your components take a list which has certain items that should appear disabled. Here, the container passes the list AND the criterium to use to know the disabled items, and the view component is responsible for rendering correctly the disability given the criterium, because it is view logic!
+	
+	Example: A list that should display a list filtered by a certain criterium -> the view component should not handle the filtering operation, because the fitler relates to business logic, not a pure view operation.
+	
+	Other example: Now imagine your component takes a list which has certain items that should appear disabled. Here, the container passes the list AND the criterium to use to find the items to disable. The view component is responsible for rendering correctly the disability given the criterium, because it is view logic!
 
 * They are pure functions:
 
 	* They have almost no interaction outside of their scope (their own or their children ones). The only interaction outside of their scope that they can have is through hooks that they provide to their parents as an API. It is very important to understand that. Pure components should be like a library. They have a very clean API that can be understood from outside the component (ie the parent).
 
-	* A pure component can be viewed as a pure function that generates markup, it creates a stable view given the parameters. In our case, the parameters are the props AND the state.
-		That means that you cannot render something that depends on something else than props or state. Example: A component that would act differently given the url -> not pure given props and state anymore.
+	* A pure component can be viewed as a pure function that generates markup, it creates a stable view given the parameters. In our case, the parameters are the props AND the internal state of the component.
+		That means that you cannot render something that depends on something else than props or state. 
+		Example: A component that would act differently given the url -> not pure given props and state anymore.
 
-	* They can have an internal state, this does not alter the purity of then render function. You should only use component state to handle a part of the global state (generally the view state) that nobody else is interested in.
+	* They can have an internal state. It does not alter the purity of the render function. You should only use component state to handle a part of the global state (remember our app is a state machine) that nobody else is interested in.
 
 * The hooks names should be as non-opinionated as possible, as well as the name of the component itself.
-	Sometimes/Often components handle a very specific part of the UI and you cannot find a non-opinionated name. That's ok, but nonetheless try to think about the component generally do, what it could be used for in a other context and you will generally find a better name that the original one you came up with.
+	Sometimes/Often components handle a very specific part of the UI and you cannot find a non-opinionated name. That's ok, but nonetheless try to think about what the component generally do, what it could be used for in a other context and you will generally find a better name that the original one you came up with.
 
 * Other implementation details:
-	* All markup should be contained inside view components: HTML AND CSS!
+	* All markup should be contained inside view components: **HTML and CSS**!
 	* You can use component state, it's ok. But only when you need to handle a part of the UI that nobody else is interested in. For example, a CSS transition.
-	* Be as dumb as possible. Your component should be reusabled, easily extended or split
-	* Dumb components can have containers as children. To them they are just black boxes that take props and are responsible for a part of the UI
+	* Be as dumb as possible. Your component should be reusabled, easily extended or split into smaller ones.
+	* Dumb components can have containers as children. To them they are just black boxes (like any other components) that take props and are responsible for a part of the UI
 
 ```javascript
 /* BAD */
@@ -560,7 +563,9 @@ export class CarList extends React.Component {
 
   render() {
 		const {cars, displayAdditionalContent} = this.props;
-		const toDisplayCars = filter(cars, car => car.hasBeenFullyLoaded); // <-- BAD, dumb components chooses how to filter list!
+		
+		// BAD, dumb components chooses how to filter list!
+		const toDisplayCars = filter(cars, car => car.hasBeenFullyLoaded); 
 
 		return (
 			<div>
@@ -569,10 +574,11 @@ export class CarList extends React.Component {
 						<button
 							key={car.id}
 
-							// BAD: Component knows what specific field to use, not reusable in another context!
+							// BAD: Component knows what specific field to use, 
+							// not reusable in another context!
 							disabled={car.toBeRepaired}
 
-							// BAD, naming is to tightly coupled to logic
+							// BAD, naming is to tightly coupled to business logic
 							onClick={() => this.addToCart(car.id)}>  
 							{car.name}
 						</button>
@@ -581,6 +587,7 @@ export class CarList extends React.Component {
 
 				// BAD: the view component is not in charge of the view.
 				// Some of its view is outside of his scope (parent decides what to display)
+				// (of course it can happen sometimes, ex: layout)
 				{displayAdditionalContent()}
 			</div>
 		);
@@ -591,14 +598,17 @@ export class CarList extends React.Component {
 type Props = {
 	cars: [{ // <-- Already filtered by container parent!
 		name: string,
+		id: string,
 	}],
+	
+	// See how the prop names are general now
 	disableField: string,
 	onSelect: Function,
 	shouldDisplayAdditionalContent: bool,
 }
 
 type State = {
-	selectedCarId: ?string
+	tmpSelectedCarId: ?string
 }
 
 export class CarList extends React.Component {
@@ -608,7 +618,7 @@ export class CarList extends React.Component {
 	// No issue here, the display of the car has no impact on the global state
 	// No concrete action has been taken by the user, the action is only a view action
 	// Of course, we could handle that in the store, but if it is useless, why bother?
-	displayCar = selectedCarId => this.setState({ selectedCarId });
+	displayCar = tmpSelectedCarId => this.setState({ tmpSelectedCarId });
 
 	// GOOD: Now the dumb component handle his own view.
 	displayAdditionalContent = () => {
@@ -621,14 +631,14 @@ export class CarList extends React.Component {
 
   render() {
 		// Cars are already filtered by the container parent.
-		const {cars, onSelect, shouldDisplayAdditionalContent} = this.props;
-		const {selectedCarId} = this.state;
+		const { cars, onSelect, shouldDisplayAdditionalContent, disableField } = this.props;
+		const { tmpSelectedCarId } = this.state;
 
 		return (
 			<div>
 				{
 					map(toDisplayCars, car => (
-						<div>
+						<div key={car.id}>
 							<button
 
 								// It's ok to be specific here, it is a view component indeed.
@@ -637,16 +647,17 @@ export class CarList extends React.Component {
 
 								// GOOD: Component handle the disabling of the view, but does not
 								// know what the data logic is. The container parent told him <- REUSABLE
-								disabled={car[props.disableField}
+								disabled={car[disableField]}
 
-								// GOOD, we do not assume anything on the logic behind,
-								// All we know is this car has been selected <- REUSABLE
+								// GOOD, we do not assume anything about the logic behind,
+								// All we say is that this car has been selected <- REUSABLE
 								onClick={() => onSelect(car.id)}>
 								{car.name}
 							</button>
 
 							<button
-								// The component is responsible for the preview, so it allows to select...
+								// The component is responsible for the preview, 
+								// so it allows to temporary select...
 								onClick={() => this.displayCar(car.id)}>
 								{`Display ${car.name} (no selection will be made)`}
 							</button>
@@ -654,7 +665,6 @@ export class CarList extends React.Component {
 					)
 				}
 
-				// ... and to display what was selected
 				// Note that this could have been handled by a child component, it would still be
 				// In the scope of this component.
 				{
@@ -676,7 +686,7 @@ export class CarList extends React.Component {
 }
 ```
 
-## Discussion about top-down
+## 4. Discussion about top-down
 
 Transfer *props* from the parents to the children.
 It is ok to use state inside dumb components only when the state concerns a part
