@@ -21,17 +21,16 @@ It's an opinionated document so you may or may not agree with all explanations. 
 	1. [React basic guidelines](#2-react-basic-guidelines)
 		1. [Naming Conventions](#a-naming-conventions)
 			1. [Folders](#i-folders)
-			1. [Files](#ii-folders)
+			1. [Files](#ii-files)
 			1. [Components](#iii-components)
-		1. [Components: break them down](#b-break-them-down)
+		1. [Components: break them down](#b-components-break-them-down)
 			1. [Define one exported React Component per file](#i-define-one-exported-react-component-per-file)
-	  	1. [Components should have a simple and predictable API](#ii-components-should-have-a-simple-and-predictable-api)
-		 	1. [Don't let your components grow big](#iii-don't-let-your-components-grow-big)
-  1. [Intermediate applications: smart and dumb components](#3-containers-and-dumb-components)
+			1. [Components should have a simple and predictable API](#ii-components-should-have-a-simple-and-predictable-api)
+		 	1. [Don't let your components grow big](#iii-dont-let-your-components-grow-big)
+  1. [Intermediate applications: smart and dumb components](#3-intermediate-applications-containers-and-dumb-components)
 		1. [Smart components, or containers](#a-smart-components-or-containers)
 	 	1. [Pure view components](#b-pure-view-components)
 	1. [Discussion about top-down](#4-discussion-about-top-down)
-
 
 ## 1. Introduction
 
