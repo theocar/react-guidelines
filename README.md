@@ -3,7 +3,7 @@
 
 
 ## Purpose
-======
+------
 
 This document describes best practices and guidelines used by the frontend team at [OuiCar](http://www.ouicar.fr/).
 This style guide has two main purposes :
@@ -17,7 +17,7 @@ It's an opinionated document so you may or may not agree with all explanations. 
 
 
 ## Table of content
-======
+------
 
   1. [Introduction](#introduction)
 	1. [React basic guidelines](#react-guidelines)
@@ -32,8 +32,8 @@ It's an opinionated document so you may or may not agree with all explanations. 
 ======
 
 #### Resources
-##### Some very insightful resources on the react ecosystem:
-- [Hacker Way: Rethinking Web App Development at Facebook](https://www.youtube.com/watch?v=nYkdrAPrdcw)
+##### Some very insightful resources on the react eco-system:
+- MUST WATCH: [Hacker Way: Rethinking Web App Development at Facebook](https://www.youtube.com/watch?v=nYkdrAPrdcw)
 - [Dan Abramov - Live React: Hot Reloading with Time Travel at react-europe 2015](https://www.youtube.com/watch?v=xsSnOQynTHs)
 - [On immutability and immutableJS](https://www.youtube.com/watch?v=I7IdS-PbEgI)
 
@@ -50,34 +50,45 @@ It's an opinionated document so you may or may not agree with all explanations. 
 
 ### Context
 At Ouicar we use the following stack:
-- React for view management
-- React-router for routing
-- FlowType for type checking
-- Redux for store management
-- Redux-saga (enhanced with effects) for side effects
+- *React* for view management
+- *React-router* for routing
+- *FlowType* for type checking
+- *Redux for* store management
+- *Redux-saga* (enhanced with effects) for side effects
 
 ### Foreword
 The idea behind this doc is to rationalize the way we build the ouicar frontend application.
 
 * React:
-	React was created with the idea that old web development was made easier by the fact that the server acted like a **state machine**. Indeed, when a user made a request, the server would find the user in the database with all the data related to him and create a HTML page that represented the current state of this user.
-	No dynamic content, no dynamic user interaction, no complexity. One view corresponded to one view.
+	React was created with the idea that old web development was made easier by the fact that the server acted like a **state machine**. Indeed, when a user made a request, the server would find the user and its data in the database and generate an HTML page that represented the current state of this user.
+	
+	No dynamic content, no dynamic user interaction, no complexity. One state corresponded to one view.
+	
 	With frontend frameworks such as angular, which works notably with double variable bindings, the complexity of an error could grow exponentially making the work of debugging tedious.
-	React answers to that problem with one-way binding and top down approach. The React components tree acts as a state machine: for one application state corresponds exactly one view.
+	
+	React solves to that problem with one-way binding and top down approach. The React components tree acts as a **state machine**: for one application state corresponds exactly one view.
+	
 	So our goal is to create an application that is very easy to reason about. A big state machine with sub state machines, each composed of sub state machines and so on...
 
 * Redux:
-	Redux (a flux framework, see the video [here](https://www.youtube.com/watch?v=nYkdrAPrdcw)) works hand to hand with React by providing a way to easily store application data. Data can be modified through **synchronous actions**, making it very simple to reason about. 
-	Data are then connected to the React components tree that handles the view. 
-	Voilà, objective fulfilled: **one state = only one view = pure view function!**
 
-* React-router:
-	React-router integrates well with the above basic stack by using the URL aka the current route as part of the global state of the application. You can specify route params, query params and what part of the React components tree should be active when a specific route is mounted. Route params and query params will be included in your global state via props passed to the child component of the route.
+	*Redux* (a flux framework, see the video [here](https://www.youtube.com/watch?list=PLb0IAmt7-GS188xDYE-u1ShQmFFGbrk0v&time_continue=622&v=nYkdrAPrdcw)) works hand to hand with React by providing a way to easily store application data. Data can be modified through **synchronous actions**, making it very simple to reason about. 
 	
-* Redux-saga:
-	As mentioned above, redux handles store state updates through **synchronous actions**. This a very important point as it ensures that your global application acts synchronously as a pure (view) function. One action will generally trigger a store update, which will trigger a React components tree update. That's it. No side effect, no surprise.
-	But what about side effect then? How do you handle API calls for example? That's when **Redux-saga** comes into place. The idea of redux-saga is to handle your asynchronous in one place, and then dispatching synchronous actions when those nasty asynchronous functions return.
-	As far as Redux is concerned, only synchronous actions are being seen. Easy.
+	The data store is then connected to the React components tree that handles the view. 
+	
+	Voilà, objective fulfilled: **one state = only one view ==> pure view function!**
+	
+	Don't hesitate to refresh your memory on functional programming, it is core to the React-redux philosophy. [Here is a very good tutorial](https://maryrosecook.com/blog/post/a-practical-introduction-to-functional-programming) :)
+
+* *React-router*:
+	React-router integrates well with the above basic stack **by using the URL as part of the global state of the application**. You can specify route params, query params and what part of the React components tree should be active when a specific route is mounted. Route params and query params will be included in your global state via props passed to the child component of the route.
+	
+* *Redux-saga*:
+	As mentioned above, redux handles store state updates through **synchronous actions**. This a very important point as it ensures that your global application acts as a pure (view) function. One action will trigger a store update, which will trigger a React components tree update. That's it. No side effect, no surprise.
+	
+	But what about side effect then? How do you handle API calls for example? That's when *Redux-saga* comes into place. The idea of redux-saga is to handle your side effects in one place, and then dispatching synchronous actions back to your system, to handle asynchronous API call return values for example.
+	
+	**As far as Redux is concerned, only synchronous actions are being seen. Easy.**
 	
 	
 ## 1. React basic guidelines
